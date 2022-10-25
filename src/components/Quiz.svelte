@@ -1,25 +1,27 @@
 <script>
     import { onMount, afterUpdate } from "svelte";
-    import qwiz from "../qwiz";
+    import qwiz from "../assets/qwiz";
     import Header from "./Header.svelte";
     import Footer from "./Footer.svelte";
-    let quizId = qwiz.quizId; // identifier for label object holding quiz
-    let quiz = []; // the object holding quiz
-    let isLoggedIn = false;
+    import Login from "./Login.svelte";
+
+    let quizId = qwiz.quizId; // identifier for object holding this quiz is quizId
+    let quiz = {}; // object holding state of the quiz
+    quiz.isLoggedIn = false;
+    // let isLoggedIn;
 
     onMount(() => {
         if (localStorage.getItem(quizId)) {
             quiz = JSON.parse(localStorage.getItem(quizId));
-            isLoggedIn = true;
-        } else {
-            isLoggedIn = false;
+            quiz.isLoggedIn = true;
         }
     });
     function setLocalStorage() {
         localStorage.setItem(quizId, JSON.stringify(quiz));
     }
     afterUpdate(() => {
-        if (isLoggedIn) setLocalStorage();
+        // console.log("in afterUpdate");
+        if (quiz.isLoggedIn) setLocalStorage();
     });
 </script>
 
@@ -27,14 +29,15 @@
     <Header {qwiz} />
 
     <section class="views">
-        {#if isLoggedIn}
-            logged in
+        {#if quiz.isLoggedIn}
+            page views go here
         {:else}
-            not logged in
+            <Login bind:quiz />
         {/if}
     </section>
 
-    <Footer {isLoggedIn} />
+
+    <Footer {quiz} />
 </main>
 
 <style>
